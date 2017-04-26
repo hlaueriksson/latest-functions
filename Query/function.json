@@ -5,7 +5,11 @@
       "authLevel": "anonymous",
       "name": "req",
       "type": "httpTrigger",
-      "direction": "in"
+      "direction": "in",
+      "route": "query/{queryName}",
+      "methods": [
+        "post"
+      ]
     },
     {
       "name": "$return",
