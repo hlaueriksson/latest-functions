@@ -1,10 +1,10 @@
-#r "LatestApi.dll"
+#r "Latest.dll"
 
 using System.Net;
 using System.Reflection;
 using CommandQuery.AzureFunctions;
 
-static QueryFunction func = new QueryFunction(Assembly.Load("LatestApi").GetQueryProcessor());
+static QueryFunction func = new QueryFunction(Assembly.Load("Latest").GetQueryProcessor());
 
 public static async Task<HttpResponseMessage> Run(string queryName, HttpRequestMessage req, TraceWriter log)
 {
