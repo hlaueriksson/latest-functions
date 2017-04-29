@@ -16,6 +16,7 @@ namespace Latest.Queries
     public class GitHubRepo
     {
         public string Name { get; set; }
+        public string Link { get; set; }
     }
 
     public class GitHubCommit
@@ -23,6 +24,7 @@ namespace Latest.Queries
         public string Repo { get; set; }
         public string Sha { get; set; }
         public string Message { get; set; }
+        public string Link { get; set; }
     }
 
     public class GitHubQuery : IQuery<GitHubData>
@@ -58,19 +60,26 @@ namespace Latest.Queries
 
         private GitHubRepo GetRepo(IEnumerable<JToken> createEvents)
         {
+            var name = createEvents.FirstOrDefault()?.SelectToken("repo.name")?.Value<string>();
+
             return new GitHubRepo
             {
-                Name = createEvents.FirstOrDefault()?.SelectToken("repo.name")?.Value<string>()
+                Name = name,
+                Link = name != null ? $"https://github.com/{name}" : null
             };
         }
 
         private GitHubCommit GetCommit(IEnumerable<JToken> pushEvents)
         {
+            var repo = pushEvents.FirstOrDefault()?.SelectToken("repo.name")?.Value<string>();
+            var sha = pushEvents.FirstOrDefault()?.SelectToken("payload.commits[0].sha")?.Value<string>();
+
             return new GitHubCommit
             {
-                Repo = pushEvents.FirstOrDefault()?.SelectToken("repo.name")?.Value<string>(),
-                Sha = pushEvents.FirstOrDefault()?.SelectToken("payload.commits[0].sha")?.Value<string>(),
-                Message = pushEvents.FirstOrDefault()?.SelectToken("payload.commits[0].message")?.Value<string>()
+                Repo = repo,
+                Sha = sha,
+                Message = pushEvents.FirstOrDefault()?.SelectToken("payload.commits[0].message")?.Value<string>(),
+                Link = sha != null ? $"https://github.com/{repo}/commit/{sha}" : null
             };
         }
     }
