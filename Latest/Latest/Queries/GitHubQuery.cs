@@ -34,20 +34,24 @@ namespace Latest.Queries
 
     public class GitHubQueryHandler : IQueryHandler<GitHubQuery, GitHubData>
     {
+        private static readonly HttpClient HttpClient;
+        private const string Uri = "https://api.github.com/users/{0}/events";
+
+        static GitHubQueryHandler()
+        {
+            HttpClient = new HttpClient();
+            HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "hlaueriksson");
+        }
+
         public async Task<GitHubData> HandleAsync(GitHubQuery query)
         {
-            var uri = $"https://api.github.com/users/{query.Username}/events";
+            var uri = string.Format(Uri, query.Username);
 
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", query.Username);
-            var response = await client.GetAsync(uri);
-
+            var response = await HttpClient.GetAsync(uri);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-
             var json = JArray.Parse(content);
-
             var createEvents = json.SelectTokens("$.[?(@.type == 'CreateEvent')]");
             var pushEvents = json.SelectTokens("$.[?(@.type == 'PushEvent')]");
 

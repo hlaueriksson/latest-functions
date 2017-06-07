@@ -19,19 +19,16 @@ namespace Latest.Queries
 
     public class BlogQueryHandler : IQueryHandler<BlogQuery, BlogData>
     {
+        private static readonly HttpClient HttpClient = new HttpClient();
+        private const string Uri = "http://conductofcode.io/feed.xml";
+
         public async Task<BlogData> HandleAsync(BlogQuery query)
         {
-            var uri = "http://conductofcode.io/feed.xml";
-
-            var client = new HttpClient();
-            var response = await client.GetAsync(uri);
-
+            var response = await HttpClient.GetAsync(Uri);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-
             var xml = XDocument.Parse(content);
-
             var item = xml.Root.Element("channel").Element("item");
 
             return new BlogData

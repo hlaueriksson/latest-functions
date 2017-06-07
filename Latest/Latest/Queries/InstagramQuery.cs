@@ -16,6 +16,10 @@ namespace Latest.Queries
 
     public class InstagramQueryHandler : IQueryHandler<InstagramQuery, InstagramData>
     {
+        private static readonly HttpClient HttpClient = new HttpClient();
+        private const string LinkUri = "https://www.instagram.com/hlaueriksson/media/";
+        private const string HtmlUri = "https://api.instagram.com/oembed/?url={0}";
+
         public async Task<InstagramData> HandleAsync(InstagramQuery query)
         {
             var link = await GetLink();
@@ -29,35 +33,26 @@ namespace Latest.Queries
 
         private async Task<string> GetLink()
         {
-            var uri = "https://www.instagram.com/hlaueriksson/media/";
-
-            var client = new HttpClient();
-            var response = await client.GetAsync(uri);
-
+            var response = await HttpClient.GetAsync(LinkUri);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-
             var json = JObject.Parse(content);
-
             var item = json.SelectToken("items[0]");
-            
+
             return item["link"].Value<string>();
         }
 
         private async Task<string> GetHtml(string link)
         {
-            var uri = $"https://api.instagram.com/oembed/?url={link}";
+            var uri = string.Format(HtmlUri, link);
 
-            var client = new HttpClient();
-            var response = await client.GetAsync(uri);
-
+            var response = await HttpClient.GetAsync(uri);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-
             var json = JObject.Parse(content);
-            
+
             return json["html"].Value<string>();
         }
     }
