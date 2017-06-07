@@ -2,7 +2,7 @@
   "frameworks": {
     "net46":{
       "dependencies": {
-        "CommandQuery.AzureFunctions": "0.2.0"
+        "CommandQuery.AzureFunctions": "0.2.1-beta"
       }
     }
    }
