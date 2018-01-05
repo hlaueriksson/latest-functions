@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatestFunctions", "LatestFunctions\LatestFunctions.csproj", "{A7635B96-CA09-4798-B692-9D8E66E8870B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatestFunctions.Specs", "LatestFunctions.Specs\LatestFunctions.Specs.csproj", "{B812F800-FEA0-41C9-8C8D-697CB4395769}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A7635B96-CA09-4798-B692-9D8E66E8870B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7635B96-CA09-4798-B692-9D8E66E8870B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7635B96-CA09-4798-B692-9D8E66E8870B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B812F800-FEA0-41C9-8C8D-697CB4395769}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B812F800-FEA0-41C9-8C8D-697CB4395769}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B812F800-FEA0-41C9-8C8D-697CB4395769}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B812F800-FEA0-41C9-8C8D-697CB4395769}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
