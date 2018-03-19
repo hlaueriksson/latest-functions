@@ -39,9 +39,9 @@ namespace LatestFunctions.Queries
 
             var content = await response.Content.ReadAsStringAsync();
             var json = JObject.Parse(content);
-            var node = json.SelectToken("user.media.nodes[0]");
+            var node = json.SelectToken("graphql.user.edge_owner_to_timeline_media.edges[0].node");
 
-            return node["code"].Value<string>();
+            return node["shortcode"].Value<string>();
         }
 
         private string GetLink(string code)
