@@ -17,14 +17,24 @@ namespace LatestFunctions.Queries
     {
     }
 
+    public interface IBlogQueryHandlerConfiguration
+    {
+        string BlogQueryHandlerFeedUri { get; }
+    }
+
     public class BlogQueryHandler : IQueryHandler<BlogQuery, BlogData>
     {
+        private readonly IBlogQueryHandlerConfiguration _config;
         private static readonly HttpClient HttpClient = new HttpClient();
-        private const string Uri = "http://conductofcode.io/feed.xml";
+
+        public BlogQueryHandler(IBlogQueryHandlerConfiguration config)
+        {
+            _config = config;
+        }
 
         public async Task<BlogData> HandleAsync(BlogQuery query)
         {
-            var response = await HttpClient.GetAsync(Uri);
+            var response = await HttpClient.GetAsync(_config.BlogQueryHandlerFeedUri);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();

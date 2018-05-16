@@ -6,9 +6,9 @@ namespace LatestFunctions.Specs.Queries
     [Subject(typeof(GitHubQueryHandler))]
     public class GitHubQueryHandlerSpecs
     {
-        Establish context = () => Subject = new GitHubQueryHandler();
+        Establish context = () => Subject = new GitHubQueryHandler(new Configuration { GitHubQueryHandlerUsername = "hlaueriksson" });
 
-        Because of = () => Result = Subject.HandleAsync(new GitHubQuery { Username = "hlaueriksson" }).Result;
+        Because of = () => Result = Subject.HandleAsync(new GitHubQuery()).Result;
 
         It should_return_data_about_the_latest_created_repo = () =>
         {

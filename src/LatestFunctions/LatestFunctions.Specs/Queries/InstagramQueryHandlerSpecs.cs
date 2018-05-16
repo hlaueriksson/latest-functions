@@ -6,7 +6,7 @@ namespace LatestFunctions.Specs.Queries
     [Subject(typeof(InstagramQueryHandler))]
     public class InstagramQueryHandlerSpecs
     {
-        Establish context = () => Subject = new InstagramQueryHandler();
+        Establish context = () => Subject = new InstagramQueryHandler(new Configuration { InstagramQueryHandlerUsername = "hlaueriksson" });
 
         Because of = () => Result = Subject.HandleAsync(new InstagramQuery()).Result;
 

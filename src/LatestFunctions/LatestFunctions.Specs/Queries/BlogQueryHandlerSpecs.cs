@@ -6,7 +6,7 @@ namespace LatestFunctions.Specs.Queries
     [Subject(typeof(BlogQueryHandler))]
     public class BlogQueryHandlerSpecs
     {
-        Establish context = () => Subject = new BlogQueryHandler();
+        Establish context = () => Subject = new BlogQueryHandler(new Configuration { BlogQueryHandlerFeedUri = "http://conductofcode.io/feed.xml" });
 
         Because of = () => Result = Subject.HandleAsync(new BlogQuery()).Result;
 

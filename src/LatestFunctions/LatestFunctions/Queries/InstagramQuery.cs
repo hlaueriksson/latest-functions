@@ -1,4 +1,6 @@
+using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CommandQuery;
 using Newtonsoft.Json.Linq;
@@ -14,11 +16,22 @@ namespace LatestFunctions.Queries
     {
     }
 
+    public interface IInstagramQueryHandlerConfiguration
+    {
+        string InstagramQueryHandlerUsername { get; }
+    }
+
     public class InstagramQueryHandler : IQueryHandler<InstagramQuery, InstagramData>
     {
+        private readonly IInstagramQueryHandlerConfiguration _config;
         private static readonly HttpClient HttpClient = new HttpClient();
-        private const string LinkUri = "https://www.instagram.com/hlaueriksson/?__a=1";
+        private const string LinkUri = "https://www.instagram.com/{0}/";
         private const string HtmlUri = "https://api.instagram.com/oembed/?url={0}";
+
+        public InstagramQueryHandler(IInstagramQueryHandlerConfiguration config)
+        {
+            _config = config;
+        }
 
         public async Task<InstagramData> HandleAsync(InstagramQuery query)
         {
@@ -34,14 +47,15 @@ namespace LatestFunctions.Queries
 
         private async Task<string> GetCode()
         {
-            var response = await HttpClient.GetAsync(LinkUri);
+            var response = await HttpClient.GetAsync(string.Format(LinkUri, _config.InstagramQueryHandlerUsername));
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var json = JObject.Parse(content);
-            var node = json.SelectToken("graphql.user.edge_owner_to_timeline_media.edges[0].node");
 
-            return node["shortcode"].Value<string>();
+            var pattern = @"<script type=""text\/javascript"">.*""shortcode"":""(.*?)"".*<\/script>";
+            var matches = Regex.Matches(content, pattern);
+
+            return matches[0].Groups[1].Value;
         }
 
         private string GetLink(string code)

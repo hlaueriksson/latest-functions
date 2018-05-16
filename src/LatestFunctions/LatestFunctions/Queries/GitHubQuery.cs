@@ -29,23 +29,28 @@ namespace LatestFunctions.Queries
 
     public class GitHubQuery : IQuery<GitHubData>
     {
-        public string Username { get; set; }
+    }
+
+    public interface IGitHubQueryHandlerConfiguration
+    {
+        string GitHubQueryHandlerUsername { get; }
     }
 
     public class GitHubQueryHandler : IQueryHandler<GitHubQuery, GitHubData>
     {
-        private static readonly HttpClient HttpClient;
+        private readonly IGitHubQueryHandlerConfiguration _config;
+        private static readonly HttpClient HttpClient = new HttpClient();
         private const string Uri = "https://api.github.com/users/{0}/events";
 
-        static GitHubQueryHandler()
+        public GitHubQueryHandler(IGitHubQueryHandlerConfiguration config)
         {
-            HttpClient = new HttpClient();
-            HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "hlaueriksson");
+            _config = config;
+            HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", _config.GitHubQueryHandlerUsername);
         }
 
         public async Task<GitHubData> HandleAsync(GitHubQuery query)
         {
-            var uri = string.Format(Uri, query.Username);
+            var uri = string.Format(Uri, _config.GitHubQueryHandlerUsername);
 
             var response = await HttpClient.GetAsync(uri);
             response.EnsureSuccessStatusCode();
