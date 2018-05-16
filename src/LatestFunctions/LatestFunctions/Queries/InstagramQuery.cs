@@ -52,7 +52,7 @@ namespace LatestFunctions.Queries
 
             var content = await response.Content.ReadAsStringAsync();
 
-            var pattern = @"<script type=""text\/javascript"">.*""shortcode"":""(.*?)"".*<\/script>";
+            var pattern = @"<script type=""text\/javascript"">.*?""shortcode"":""(.*?)"".*<\/script>";
             var matches = Regex.Matches(content, pattern);
 
             return matches[0].Groups[1].Value;
