@@ -15,11 +15,6 @@ namespace LatestFunctions.Specs.Queries
             Result.Repo.ShouldNotBeNull();
         };
 
-        It should_return_data_about_the_latest_commit = () =>
-        {
-            Result.Commit.ShouldNotBeNull();
-        };
-
         static GitHubQueryHandler Subject;
         static GitHubData Result;
     }

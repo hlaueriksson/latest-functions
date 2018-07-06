@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -10,20 +10,11 @@ namespace LatestFunctions.Queries
     public class GitHubData
     {
         public GitHubRepo Repo { get; set; }
-        public GitHubCommit Commit { get; set; }
     }
 
     public class GitHubRepo
     {
         public string Name { get; set; }
-        public string Link { get; set; }
-    }
-
-    public class GitHubCommit
-    {
-        public string Repo { get; set; }
-        public string Sha { get; set; }
-        public string Message { get; set; }
         public string Link { get; set; }
     }
 
@@ -40,7 +31,7 @@ namespace LatestFunctions.Queries
     {
         private readonly IGitHubQueryHandlerConfiguration _config;
         private static readonly HttpClient HttpClient = new HttpClient();
-        private const string Uri = "https://api.github.com/users/{0}/events";
+        private const string Uri = "https://api.github.com/users/{0}/repos?sort=created";
 
         public GitHubQueryHandler(IGitHubQueryHandlerConfiguration config)
         {
@@ -57,38 +48,15 @@ namespace LatestFunctions.Queries
 
             var content = await response.Content.ReadAsStringAsync();
             var json = JArray.Parse(content);
-            var createEvents = json.SelectTokens("$.[?(@.type == 'CreateEvent')]");
-            var pushEvents = json.SelectTokens("$.[?(@.type == 'PushEvent')]");
+            var repo = json.FirstOrDefault(x => !x.Value<bool>("fork"));
 
             return new GitHubData
             {
-                Repo = GetRepo(createEvents),
-                Commit = GetCommit(pushEvents)
-            };
-        }
-
-        private GitHubRepo GetRepo(IEnumerable<JToken> createEvents)
-        {
-            var name = createEvents.FirstOrDefault()?.SelectToken("repo.name")?.Value<string>();
-
-            return new GitHubRepo
-            {
-                Name = name,
-                Link = name != null ? $"https://github.com/{name}" : null
-            };
-        }
-
-        private GitHubCommit GetCommit(IEnumerable<JToken> pushEvents)
-        {
-            var repo = pushEvents.FirstOrDefault()?.SelectToken("repo.name")?.Value<string>();
-            var sha = pushEvents.FirstOrDefault()?.SelectToken("payload.commits[0].sha")?.Value<string>();
-
-            return new GitHubCommit
-            {
-                Repo = repo,
-                Sha = sha,
-                Message = pushEvents.FirstOrDefault()?.SelectToken("payload.commits[0].message")?.Value<string>(),
-                Link = sha != null ? $"https://github.com/{repo}/commit/{sha}" : null
+                Repo = new GitHubRepo
+                {
+                    Name = repo.Value<string>("full_name"),
+                    Link = repo.Value<string>("html_url")
+                }
             };
         }
     }
