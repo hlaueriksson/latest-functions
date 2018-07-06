@@ -39,13 +39,14 @@ namespace LatestFunctions.Queries
 
             var content = await response.Content.ReadAsStringAsync();
             var xml = XDocument.Parse(content);
-            var item = xml.Root.Element("channel").Element("item");
+            var ns = xml.Root.Name.Namespace;
+            var entry = xml.Root.Element(ns + "entry");
 
             return new BlogData
             {
-                Title = item.Element("title").Value,
-                Published = DateTime.Parse(item.Element("pubDate").Value),
-                Link = item.Element("link").Value
+                Title = entry.Element(ns + "title").Value,
+                Published = DateTime.Parse(entry.Element(ns + "published").Value),
+                Link = entry.Element(ns + "link").Attribute("href").Value
             };
         }
     }
